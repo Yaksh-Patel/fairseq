@@ -73,7 +73,7 @@ class FConvModel(nn.Module):
 
 class Encoder(nn.Module):
     """Convolutional encoder"""
-    def __init__(self, dictionary, embed_dim=512, max_positions=1024,
+    def __init__(self, dictionary, embed_dim=512, embed_dict=None, max_positions=1024,
                  convolutions=((512, 3),) * 20, dropout=0.1):
         super(Encoder, self).__init__()
         self.dictionary = dictionary
@@ -83,6 +83,10 @@ class Encoder(nn.Module):
         num_embeddings = len(dictionary)
         padding_idx = dictionary.pad()
         self.embed_tokens = Embedding(num_embeddings, embed_dim, padding_idx)
+
+        if embed_dict:
+            self.embed_tokens = utils.load_embedding(embed_dict, self.dictionary, self.embed_tokens)
+        
         self.embed_positions = Embedding(max_positions, embed_dim, padding_idx)
 
         in_channels = convolutions[0][0]
@@ -170,7 +174,7 @@ class AttentionLayer(nn.Module):
 
 class Decoder(nn.Module):
     """Convolutional decoder"""
-    def __init__(self, dictionary, embed_dim=512, out_embed_dim=256,
+    def __init__(self, dictionary, embed_dim=512, embed_dict=None, out_embed_dim=256,
                  max_positions=1024, convolutions=((512, 3),) * 20,
                  attention=True, dropout=0.1):
         super(Decoder, self).__init__()
@@ -185,6 +189,10 @@ class Decoder(nn.Module):
         num_embeddings = len(dictionary)
         padding_idx = dictionary.pad()
         self.embed_tokens = Embedding(num_embeddings, embed_dim, padding_idx)
+
+        if embed_dict:
+            self.embed_tokens = utils.load_embedding(embed_dict, self.dictionary, self.embed_tokens)
+        
         self.embed_positions = Embedding(max_positions, embed_dim, padding_idx)
 
         self.fc1 = Linear(embed_dim, in_channels, dropout=dropout)
@@ -538,9 +546,21 @@ def parse_arch(args):
 
 
 def build_model(args, src_dict, dst_dict):
+    
+    encoder_embed_dict = None
+    if args.encoder_embed_path:
+        encoder_embed_dict = utils.parse_embedding(args.encoder_embed_path)
+        utils.print_embed_overlap(encoder_embed_dict, src_dict)
+
+    decoder_embed_dict = None
+    if args.decoder_embed_path:
+        decoder_embed_dict = utils.parse_embedding(args.decoder_embed_path)
+        utils.print_embed_overlap(decoder_embed_dict, dst_dict)    
+        
     encoder = Encoder(
         src_dict,
         embed_dim=args.encoder_embed_dim,
+        embed_dict=encoder_embed_dict,
         convolutions=eval(args.encoder_layers),
         dropout=args.dropout,
         max_positions=args.max_positions,
@@ -548,6 +568,7 @@ def build_model(args, src_dict, dst_dict):
     decoder = Decoder(
         dst_dict,
         embed_dim=args.decoder_embed_dim,
+        embed_dict=decoder_embed_dict,
         convolutions=eval(args.decoder_layers),
         out_embed_dim=args.decoder_out_embed_dim,
         attention=eval(args.decoder_attention),
