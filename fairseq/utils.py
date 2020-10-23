@@ -185,7 +185,7 @@ def rstrip_pad(tensor, pad):
         return tensor[:-strip]
     return tensor
 
-
+#-----------new changes below--------------------
 def print_embed_overlap(embed_dict, vocab_dict):
      embed_keys = set(embed_dict.keys())
      vocab_keys = set(vocab_dict.symbols)
@@ -210,10 +210,10 @@ def parse_embedding(embed_path):
             pieces = line.strip().split()
             embed_dict[pieces[0]] = torch.Tensor([float(weight) for weight in pieces[1:]])
     return embed_dict
-+
-+def load_embedding(embed_dict, vocab, embedding):
-+    for idx in range(len(vocab)):
-+        token = vocab[idx]
-+        if token in embed_dict:
-+            embedding.weight.data[idx] = embed_dict[token]
-+    return embedding
+
+def load_embedding(embed_dict, vocab, embedding):
+    for idx in range(len(vocab)):
+        token = vocab[idx]
+        if token in embed_dict:
+            embedding.weight.data[idx] = embed_dict[token]
+    return embedding
