@@ -10,6 +10,7 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from fairseq import utils
 
 from fairseq.modules import BeamableMM, LinearizedConvolution
 
