@@ -138,10 +138,14 @@ def add_model_args(parser):
                        help='model architecture ({})'.format(', '.join(models.arch_model_map.keys())))
     group.add_argument('--encoder-embed-dim', type=int, metavar='N',
                        help='encoder embedding dimension')
+    group.add_argument('--encoder-embed-path', default=None, type=str, metavar='STR',
+                            help='path to pre-trained encoder embedding')
     group.add_argument('--encoder-layers', type=str, metavar='EXPR',
                        help='encoder layers [(dim, kernel_size), ...]')
     group.add_argument('--decoder-embed-dim', type=int, metavar='N',
                        help='decoder embedding dimension')
+    group.add_argument('--decoder-embed-path', default=None, type=str, metavar='STR',
+                            help='path to pre-trained decoder embedding')
     group.add_argument('--decoder-layers', type=str, metavar='EXPR',
                        help='decoder layers [(dim, kernel_size), ...]')
     group.add_argument('--decoder-out-embed-dim', type=int, metavar='N',
