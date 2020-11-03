@@ -11,6 +11,7 @@ import os
 import torch
 import traceback
 import io
+import numpy as np
 
 from torch.autograd import Variable
 from torch.serialization import default_restore_location
