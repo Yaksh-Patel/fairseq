@@ -10,6 +10,7 @@ import logging
 import os
 import torch
 import traceback
+import io
 
 from torch.autograd import Variable
 from torch.serialization import default_restore_location
@@ -203,13 +204,28 @@ def parse_embedding(embed_path):
         the -0.0230 -0.0264  0.0287  0.0171  0.1403
         at -0.0395 -0.1286  0.0275  0.0254 -0.0932
     """
-    embed_dict = dict()
-    with open(embed_path) as f_embed:
-        _ = next(f_embed) #skip header
-        for line in f_embed:
-            pieces = line.strip().split()
-            embed_dict[pieces[0]] = torch.Tensor([float(weight) for weight in pieces[1:]])
-    return embed_dict
+#     embed_dict = dict()
+#     with open(embed_path) as f_embed:
+#         _ = next(f_embed) #skip header
+#         for line in f_embed:
+#             pieces = line.strip().split()
+#             embed_dict[pieces[0]] = torch.Tensor([float(weight) for weight in pieces[1:]])
+
+        # loading GloVe
+    embedd_dict = {}
+    word = None
+    with io.open(embed_path, 'r', encoding='utf-8') as f:
+        # skip first line
+        for i, line in enumerate(f):
+            if i == 0:
+                continue
+            word, vec = line.split(' ', 1)
+            embedd_dict[word] = np.fromstring(vec, sep=' ')
+    embedd_dim = len(embedd_dict[word])
+    for k, v in embedd_dict.items():
+        if len(v) != embedd_dim:
+            print(len(v),embedd_dim)
+    return embedd_dict
 
 def load_embedding(embed_dict, vocab, embedding):
     for idx in range(len(vocab)):
