@@ -232,5 +232,5 @@ def load_embedding(embed_dict, vocab, embedding):
     for idx in range(len(vocab)):
         token = vocab[idx]
         if token in embed_dict:
-            embedding.weight.data[idx] = embed_dict[token]
+            embedding.weight.data[idx] = torch.tensor(embed_dict[token])
     return embedding
