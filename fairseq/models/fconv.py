@@ -415,26 +415,6 @@ def Embedding(num_embeddings, embedding_dim, padding_idx):
     m.weight.data.normal_(0, 0.1)
     return m
 
-#     elif embedding == 'fasttext':
-#         # loading GloVe
-#         embedd_dict = {}
-#         word = None
-#         with io.open(embedding_path, 'r', encoding='utf-8') as f:
-#             # skip first line
-#             for i, line in enumerate(f):
-#                 if i == 0:
-#                     continue
-#                 word, vec = line.split(' ', 1)
-#                 embedd_dict[word] = np.fromstring(vec, sep=' ')
-#         embedd_dim = len(embedd_dict[word])
-# #----------------------keep below two lines commented------------
-# #         if lower_case:
-# #             embedd_dict = calc_mean_vec_for_lower_mapping(embedd_dict)
-# #----------------------------------------------------------------
-#         for k, v in embedd_dict.items():
-#             if len(v) != embedd_dim:
-#                 print(len(v),embedd_dim)
-
 
 def Linear(in_features, out_features, dropout=0):
     """Weight-normalized Linear layer (input: N x T x C)"""
